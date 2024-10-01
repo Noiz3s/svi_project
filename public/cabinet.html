@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <link href="outlines.css" rel="stylesheet">
+  <title>User</title>
+</head>
+<body>
+<header>
+  <a href="index.html">Назад</a>
+</header>
+<section>
+  <p id="Orders"></p>
+  <h1>Заказы</h1>
+  <div class="Order">
+    <h3>Loading...</h3>
+  </div>
+  <h1>Создать заказ</h1>
+  <form id="createOrderForm">
+    <label for="concert">Концерт:</label>
+    <select id="concert" name="concert" required></select>
+    <br>
+    <label for="tickets">Билеты:</label>
+    <select id="tickets" name="tickets" multiple required></select>
+    <br>
+    <label for="email">Электронная почта</label>
+    <input type="email" name="email" id="email" placeholder="example@mail.ru" required>
+    <br>
+    <button type="submit">Создать заказ</button>
+  </form>
+</section>
+<script>
+  window.onload = function() {
+    // Fetch orders
+    fetch('/order/All_orders')
+      .then(response => response.json())
+      .then(data => {
+        const concertsDiv = document.querySelector('.Order');
+        if (data.length > 0) {
+          concertsDiv.innerHTML = '';
+          data.forEach(order => {
+            const concertDiv = document.createElement('div');
+            const date = new Date(order.date);
+            concertDiv.innerHTML = `
+              <br>
+              <h3>Дата: ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} | Цена: ${order.price}руб. | Статус: ${order.status}</h3>
+              <br>
+            `;
+            concertsDiv.appendChild(concertDiv);
+          });
+        } else {
+          concertsDiv.innerHTML = `
+            <h3>Пока нет(</h3>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching orders:', error);
+        const concertsDiv = document.querySelector('.Order');
+        concertsDiv.innerHTML = `
+          <h3>Error loading orders</h3>
+        `;
+      });
+
+    // Fetch concerts for the order form
+    fetch('/concert/All_concerts')
+      .then(response => response.json())
+      .then(data => {
+        const concertSelect = document.getElementById('concert');
+        if (concertSelect) {
+          data.forEach(concert => {
+            const option = document.createElement('option');
+            option.value = concert.id;
+            option.textContent = `${concert.name} (${new Date(concert.date).toLocaleDateString()})`;
+            concertSelect.appendChild(option);
+          });
+
+          // Load tickets when a concert is selected
+          concertSelect.addEventListener('change', function() {
+            const concertId = concertSelect.value;
+            const ticketsSelect = document.getElementById('tickets');
+            ticketsSelect.innerHTML = ''; // Clear existing options
+
+            if (concertId) {
+              fetch(`/concert/${concertId}/tickets`)
+                .then(response => response.json())
+                .then(tickets => {
+                  tickets.forEach(ticket => {
+                    if (ticket.status === 0) {
+                      const option = document.createElement('option');
+                      option.value = ticket.id;
+                      option.textContent = `Ряд: ${ticket.row} Место: ${ticket.place} Цена: ${ticket.price}`;
+                      ticketsSelect.appendChild(option);
+                    }
+                  });
+                })
+                .catch(error => {
+                  console.error('Error fetching tickets:', error);
+                  ticketsSelect.innerHTML = `<option>Ошибка при загрузке билетов</option>`;
+                });
+            }
+          });
+        } else {
+          console.error('Element with id "concert" not found');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching concerts for order form:', error);
+      });
+
+    // Handle create order form submission
+    const createOrderForm = document.getElementById('createOrderForm');
+    createOrderForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const concertId = document.getElementById('concert');
+      const ticketsSelect = document.getElementById('tickets');
+      const selectedTickets = Array.from(ticketsSelect.selectedOptions).map(option => option.value);
+      let ticketsSum = 0;
+      selectedTickets.forEach(ticket => ticketsSum += ticket.valueOf());
+      const orderData = {
+        tickets: selectedTickets,
+        date: Date.now(),
+        price: ticketsSum,
+        status: 1,
+      };
+      fetch(`/order/create/${document.getElementById('email').value}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Заказ успешно создан!');
+            location.reload();
+          }
+        });
+    });
+  };
+</script>
+<div id="adminSection" , style="display: none">
+  <h1>Добавить билет</h1>
+  <form id="addTicketForm">
+    <label for="ticketRow">Ряд:</label>
+    <input type="number" name="ticketRow" id="ticketRow" required>
+    <br>
+    <label for="concertId">ID Концерта:</label>
+    <input type="number" name="concertId" id="concertId" required>
+    <br>
+    <label for="ticketPlace">Место:</label>
+    <input type="number" name="ticketPlace" id="ticketPlace" required>
+    <br>
+    <label for="ticketPrice">Цена:</label>
+    <input type="number" name="ticketPrice" id="ticketPrice" required>
+    <br>
+    <label for="ticketStatus">Статус:</label>
+    <select id="ticketStatus" name="ticketStatus" required>
+      <option value="0">Доступен</option>
+      <option value="1">Забронирован</option>
+    </select>
+    <br>
+    <button type="submit">Добавить билет</button>
+  </form>
+
+  <script>
+    const adminSection = document.getElementById('adminSection');
+    if (JSON.parse(sessionStorage.getItem('user')).isadmin) {
+      adminSection.style.display = 'block';
+    }
+
+    const addTicketForm = document.getElementById('addTicketForm');
+    addTicketForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      let id = 0;
+      fetch('/ticket/All_tickets')
+        .then(response => response.json())
+        .then(tickets => {
+          tickets.forEach(ticket => {
+            if (ticket.id > id) {
+              id = ticket.id;
+            }
+          });
+
+          const ticketData = {
+            id: id + 1,
+            row: parseInt(document.getElementById('ticketRow').value, 10), // Преобразуем в число
+            concertid: parseInt(document.getElementById('concertId').value, 10), // Исправлено на concertId
+            place: parseInt(document.getElementById('ticketPlace').value, 10), // Преобразуем в число
+            price: parseFloat(document.getElementById('ticketPrice').value), // Преобразуем в число с плавающей точкой
+            status: parseInt(document.getElementById('ticketStatus').value, 10), // Преобразуем в число
+          };
+
+          console.log(ticketData); // Для отладки
+
+          fetch('/ticket/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ticketData),
+          });
+        })
+        .catch(error => {
+          console.error('Ошибка при получении билетов:', error);
+        });
+    });
+  </script>
+</div>
+
+</body>
+</html>

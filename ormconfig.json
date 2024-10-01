@@ -1,0 +1,20 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "web_labs",
+  "password": "DArXQk0iyEwBpLfh4TsasOxapp0kl2Wc",
+  "database": "dbnoomatter",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+    "concert.ts"
+  ],
+  "migrations": [
+    "1710602673822-CreateConcertTable.ts"
+  ],
+  "cli":{
+    "entitiesDir" : "src/entities",
+    "migrationsDir" : "src/migrations"
+  }
+}

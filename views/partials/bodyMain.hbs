@@ -1,0 +1,177 @@
+<main>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA36bVkg5WBEV-8-screb4Us0vEHp7p3rE",
+      authDomain: "noomatter-55435.firebaseapp.com",
+      projectId: "noomatter-55435",
+      storageBucket: "noomatter-55435.appspot.com",
+      messagingSenderId: "245262591175",
+      appId: "1:245262591175:web:397a8e15d5c8e145f70ae2",
+      measurementId: "G-NZX09ZW8GQ"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+  <section class="Main">
+    <p id="Main"></p>
+    <div class="Nav">
+      <a href="#Main">Главная</a>
+      <a href="#Concerts">Концерты</a>
+      <a href="#Who">Кто мы такие?</a>
+      <a href="#Albums">Альбомы</a>
+      <a href="#Photo">Фотографии</a>
+      <a href="#Contacts">Контакты</a>
+    </div>
+    <div class="Logo">
+      <img style="vertical-align: middle" src="3.svg" width="50" height="50" alt="Лого">
+      <span style="vertical-align: middle">No Matter</span>
+    </div>
+  </section>
+  <section>
+    <p id="Concerts"></p>
+    <h1>Концерты</h1>
+    <div class="Concert">
+      <h3>Loading...</h3>
+    </div>
+  </section>
+  <script>
+    window.onload = function() {
+      fetch('/concert/All_concerts')
+        .then(response => response.json())
+        .then(data => {
+          const concertsDiv = document.querySelector('.Concert');
+          if (data.length > 0) {
+            concertsDiv.innerHTML = ''; // Очистить содержимое блока Concert
+            data.forEach(concert => {
+              const concertDiv = document.createElement('div');
+              concertDiv.innerHTML = `
+                                <br>
+                                <h3>${concert.name} ${concert.date}</h3>
+                                <br>
+                            `;
+              concertsDiv.appendChild(concertDiv);
+            });
+          } else {
+            concertsDiv.innerHTML = `
+                            <h3>Пока нет(</h3>
+                            <a href="#openModal">Оставьте данные, чтобы мы сообщили вам о них!</a>
+                            <p><a href="generator.html">Добавим концертик</a></p>
+                        `;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching concerts:', error);
+          const concertsDiv = document.querySelector('.Concert');
+          concertsDiv.innerHTML = `
+                        <h3>Error loading concerts</h3>
+                    `;
+        });
+    };
+  </script>
+  <section>
+    <p id="Who"></p>
+    <h1>Кто мы такие?</h1>
+    <blockquote>
+      <p>It doesn't matter who we are. What matters is our music.</p>
+      <cite>No Matter</cite>
+    </blockquote>
+    <div class="Ura">
+      <img style="vertical-align: middle" src="4.jpg" alt="Юра Орёт">
+      <h2 style="vertical-align: middle">YURAORET</h2>
+      <p>День Рождения: 03.12.2005</p>
+      <p>
+        Всем привет, меня зовут SHIMO, и я хочу немного рассказать вам про Юру. В
+        первую очередь наверное хочется сказать, что это самый близкий для меня человек. Я обязан ему
+        наверное всем, что у меня есть. Вы даже представить себе не можете, сколько раз он вытаскивал меня,
+        помогал мне разобраться с собой и... никогда не оставлял
+      </p>
+      <p>
+        Правда, это самый искренний и светлый человек, которого я знаю. Может происходить что угодно, но Юра
+        всегда останется собой, что бы ни случилось. Он может вести себя странно, неадекватно, ляпнуть
+        что-то не к месту, как и все мы, но есть одно принципиальное отличие. Он всегда делает это от
+        чистого сердца...
+      </p>
+      <p>
+        Юра дарит надежду всем людям вокруг себя. Надежду на то, что их жизнь будет прожита не зря. И знает,
+        что ПРОЖИВЁТ свою жизнь, потому что может и хочет, а это для него главное<br>
+        Вы не поверите, если я вам расскажу, насколько он вас всех любит и сколько всего каждый день делает
+        ради вас. Неделями не будет спать, есть, дышать, но сделает всё, что в его силах.<br>
+        Вот такой он человек.
+      </p>
+      <p>Я бы даже сказал</p>
+      <p>Человек.</p>
+    </div>
+    <div class="Shimo">
+      <img style="vertical-align: middle" src="5.jpg" alt="Shimo">
+      <h2 style="vertical-align: middle">SHIMO</h2>
+      <p>День Рождения: 20.12.2004</p>
+      <p>Всем привет, я Юра и теперь я хочу рассказать вам немного про SHIMO.</p>
+      <p>
+        Я дружу и работаю с ним уже много лет и видел, как он менялся, внешне, внутренне, неважно как. Но за
+        все это в нем не изменились две очень важные черты. Во-первых, что бы он ни творил, как бы себя ни
+        вел, я всегда знаю: либо он знает, что делает, и все идет по плану, либо он обязательно сможет найти
+        выход. А во-вторых, я знаю, что у него внутри огромное, и вы бы знали насколько чуткое и любящее
+        всех, сердце. Я всегда могу положиться на него. Неважно где мы, когда последний раз общались и что у
+        него там сейчас. Я просто знаю, что, если нужно, он все сделает ради своих друзей и родных.
+      </p>
+      <p>
+        Это самый честный человек, которого я знаю. Человек, который честен с собой и с другими, а таких я
+        знаю невероятно мало. Для него данное слово дороже всего, он порвется, но сделает все, чтобы
+        сдержать обещание.
+      </p>
+      <p>
+        SHIMO всегда генерирует идеи, что-то придумывает, а когда начинает делать, то доводит все до идеала,
+        чего бы ему этого не стоило. Это касается и работы, и жизни.
+      </p>
+      <p>
+        Он все время меняет мир вокруг себя, не дает себе остановиться и дарит окружающим стимул двигаться
+        вперед. Я не знаю, что было бы с NO MATTER без него. Да и что было бы со мной без него, но точно
+        было бы скучнее, обыденней, короче да.
+      </p>
+      <p>
+        В общем, вы спросите: «Вау, а кто такой SHIMO?» - я скажу вам это все еще раз и буду говорить, пока
+        вы не поймете эту душу.
+      </p>
+      <p>Сильную и неповторимую</p>
+      <p>Душу</p>
+    </div>
+    <p>Как появилась группа?</p>
+    <p>Почему именно <strong>No Matter?</strong></p>
+
+    <p id="Albums"></p>
+    <h1>Альбомы</h1>
+    <div class="Albums slideshow-container">
+      <div class="Album mySlides">
+        <a href="https://sfm.click/b/vUDd"><img src="sorry.jpg" width="75%" height="75%" alt="Обложка Прости"></a>
+        <div class="text">Прости</div>
+      </div>
+      <div class="Album mySlides">
+        <a href="https://sfm.click/b/FXKd"><img src="solt.jpg" width="75%" height="75%" alt="Обложка Соль"></a>
+        <div class="text">Соль</div>
+      </div>
+      <div class="Album mySlides">
+        <a href="https://sfm.click/b/lMp7"><img src="ne_navid_mena.jpg" width="75%" height="75%" alt="Обложка Ненавидь меня"></a>
+        <div class="text">Ненавидь меня</div>
+      </div>
+      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+      <a class="next" onclick="plusSlides(1)">&#10095;</a>
+    </div>
+    <br>
+    <div style="text-align:center">
+      <span class="dot" onclick="currentSlide(1)"></span>
+      <span class="dot" onclick="currentSlide(2)"></span>
+      <span class="dot" onclick="currentSlide(3)"></span>
+    </div>
+  </section>
+  <section>
+    <p id="Photo"></p>
+    <h1>Фотографии</h1>
+    <p id="preloader">Загрузка...</p>
+    <div id="Photos" class="slideshow-container"></div>
+  </section>
+</main>

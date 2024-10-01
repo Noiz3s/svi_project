@@ -1,0 +1,19 @@
+<footer>
+  <section>
+    <p id="Contacts"></p>
+    <h4>Контактная информация</h4>
+  </section>
+  <a href="tel:+79216344017"><img src="phone.png" width="20" height="20" alt="Телефон"></a>
+  <a href="https://vk.com/nomattermusic"><img src="VK%20Logo%20White.svg" width="20" height="20" alt="Мы в ВК"></a>
+  <a href="https://t.me/joinchat/g8B5ZuT_jU1iZGQy"><img src="tg.png" width="20" height="20" alt="Мы в Телеграмме"></a>
+  <a href="https://www.youtube.com/channel/UClcHwZbCwXWLRM3ZaXavtKg"><img src="youtube.png" width="20" height="20" alt="Мы в YouTube"></a>
+  <a href="https://www.instagram.com/no_omatter/"><img src="instagram.png" width="20" height="20" alt="Мы в Instagram"></a>
+
+  <p id="processing-time"></p>
+</footer>
+
+<script>
+  const processingTime = document.cookie.replace(/(?:(?:^|.*;\s*)processingTime\s*=\s*([^;]*).*$)|^.*$/, "$1");
+
+  document.getElementById('processing-time').innerText = `Processing Time: ${processingTime}ms`;
+</script>

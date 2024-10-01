@@ -1,0 +1,423 @@
+html{
+    scroll-behavior: smooth;
+}
+h4, p, cite, pre{
+    color: snow;
+    font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
+    font-size: 16px;
+}
+
+#Concerts, #Albums, #Who, #Contacts{
+    border: 1px solid snow;
+    scroll-margin-top: 1em;
+}
+#Main{
+    scroll-margin-top: 1em;
+}
+
+h1{
+    font-family: 'GillSans', 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
+    color: deeppink;
+}
+
+span{
+    color: deeppink;
+    font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
+    font-size: 50px;
+}
+
+.Main{
+    background-image: linear-gradient(rgba(0,0,0, 1), 10%, rgba(0,0,0,0.1)), url("1.jpg");
+    background-position: center;
+    background-attachment: scroll;
+    height: 450px;
+    width: 100%;
+    background-repeat: no-repeat;
+}
+div.Nav {
+    background: rgba(0, 0, 0, 0.9);
+    font-size: 16px;
+    opacity: 0.9;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+
+    & a {
+        overflow: hidden;
+        flex-flow: row nowrap;
+        text-decoration: none;
+        color: snow;
+        display: inline;
+        padding: 10px 28px;
+        font-size: 18px;
+        font-family: 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
+    }
+
+    & a:hover{
+        color: deeppink;
+        text-decoration: underline deeppink;
+    }
+}
+
+.Logo {
+    z-index: 1000;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    margin-top: 400px;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 10px;
+    padding: 0.5%;
+    background-color: rgba(0, 0, 0, 0.75);
+    left: 50%;
+    transform: translate(-50%,-50%);
+    flex-flow: row nowrap;
+
+    & span{
+        font-family: GillSans, Arial, serif;
+        font-weight: bold;
+    }
+}
+
+.Order {
+    display:inline-block;
+    border-radius: 10px;
+    padding: 1%;
+    margin: 1%;
+    background-color: rgba(255, 255, 255, 0.95);
+    width: 98%;
+    font-family: GillSans, Arial, serif;
+}
+
+.preloader {
+    display: block;
+}
+.Concert {
+    display:inline-block;
+    border-radius: 10px;
+    padding: 1%;
+    margin: 1%;
+    vertical-align: middle;
+    background-color: rgba(255, 255, 255, 0.95);
+    width: 98%;
+    font-family: GillSans, Arial, serif;
+
+    & h3{
+        text-decoration: none;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-family: GillSans, Arial, serif;
+        color: black;
+        text-align: left;
+    }
+    & a{
+        text-decoration: underline;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-family: GillSans, Arial, serif;
+        color: black;
+        text-align: left;
+    }
+}
+.notification{
+    color: snow;
+}
+form{
+    background: snow;
+    border-width: 0;
+    border-radius: 10px;
+}
+fieldset p{
+    color: black;
+    font-family: GillSans, Arial, serif;
+}
+button {
+    background: lightpink;
+    color: black;
+    font-size: 14px;
+    border-width: 0;
+    padding: 10px 15px;
+    margin: 20px 0;
+    border-radius: 20px;
+    cursor: pointer;
+    outline: none;
+}
+button:hover{
+    background: deeppink;
+    color: snow;
+}
+
+table {
+    background: lightpink;
+    color: black;
+    padding: 10px 15px;
+    margin: 20px 0;
+    border-radius: 20px;
+    font-family: GillSans, Arial, serif;
+}
+.modal {
+    position: fixed; /* фиксированное положение */
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,0.5); /* цвет фона */
+    z-index: 1050;
+    opacity: 0; /* по умолчанию модальное окно прозрачно */
+    -webkit-transition: opacity 200ms ease-in;
+    -moz-transition: opacity 200ms ease-in;
+    transition: opacity 200ms ease-in; /* анимация перехода */
+    pointer-events: none; /* элемент невидим для событий мыши */
+    margin: 0;
+    padding: 0;
+}
+/* при отображении модального окно */
+.modal:target {
+    opacity: 1; /* делаем окно видимым */
+    pointer-events: auto; /* элемент видим для событий мыши */
+    overflow-y: auto; /* добавляем прокрутку по y, когда элемент не помещается на страницу */
+}
+/* ширина модального окна и его отступы от экрана */
+.modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 10px;
+}
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 500px;
+        margin: 30px auto; /* для отображения модального окна по центру */
+    }
+}
+/* свойства для блока, содержащего контент модального окна */
+.modal-content {
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: .3rem;
+    outline: 0;
+    font-family: GillSans, Arial, serif;
+}
+@media (min-width: 768px) {
+    .modal-content {
+        -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+        box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    }
+}
+/* свойства для заголовка модального окна */
+.modal-header {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #eceeef;
+    font-family: GillSans, Arial, serif
+}
+.modal-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+/* свойства для кнопки "Закрыть" */
+.close {
+    float: right;
+    font-family: sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    text-decoration: none;
+}
+/* свойства для кнопки "Закрыть" при нахождении её в фокусе или наведении */
+.close:focus, .close:hover {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: .75;
+}
+/* свойства для блока, содержащего основное содержимое окна */
+.modal-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 15px;
+    overflow: auto;
+}
+
+.Ura{
+    display:inline-block;
+    border-radius: 10px;
+    padding: 1%;
+    margin: 1%;
+    vertical-align: middle;
+    background-color: rgba(255, 255, 255, 0.95);
+
+    & h2{
+        font-family: GillSans, Arial, serif;
+        font-weight: bold;
+        width: 100%;
+        color: black;
+        text-align: right;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    & img {
+        width: 25%;
+        height: 25%;
+        clear: both;
+        float: left;
+        margin: 1.5%;
+        box-shadow: 5px 5px 5px black;
+    }
+    & p{
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-family: GillSans, Arial, serif;
+        color: black;
+        text-align: right;
+    }
+}
+
+.Shimo{
+    display:inline-block;
+    border-radius: 10px;
+    padding: 1%;
+    margin: 1%;
+    vertical-align: middle;
+    background-color: rgba(255, 255, 255, 0.95);
+
+    & h2{
+        font-family: GillSans, Arial, serif;
+        font-weight: bold;
+        width: 100%;
+        color: black;
+        text-align: left;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    & img {
+        width: 25%;
+        height: 25%;
+        clear: both;
+        float: right;
+        margin: 1.5%;
+        box-shadow: 5px 5px 5px black;
+    }
+    & p{
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-family: GillSans, Arial, serif;
+        color: black;
+        text-align: left;
+    }
+}
+
+* {box-sizing: border-box}
+.mySlides {
+    display: none;
+    text-align: center;
+    align-items: center;
+}
+.slideshow-container {
+    max-width: 40%;
+    max-height: 40%;
+    margin-left: 30%;
+    position: relative;
+}
+/* Кнопки next & previous*/
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 10px;
+    user-select: none;
+}
+/* Измените положение "next button" */
+.next {
+    right: 0;
+}
+/* Добавьте черный фоновый цвет с небольшой прозрачностью*/
+.prev:hover, .next:hover {
+    background-color: rgba(0,0,0,0.8);
+}
+/* Подпись под изображением */
+.text {
+    text-decoration: none;
+    color: snow;
+    font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
+    font-size: 16px;
+    padding: 8px 12px;
+    position: absolute;
+    bottom: 8px;
+    width: 100%;
+    text-align: center;
+}
+/* Точки/маркеры/указатели */
+.dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #999999;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+.active, .dot:hover {
+    background-color: snow;
+}
+
+body{
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+footer{
+    text-align: center;
+    align-items: center;
+    background-image: url("6.jpg");
+    background-position: center;
+    background-attachment: scroll;
+    width: 100%;
+    height: 400px;
+    font-size: 16px;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+}

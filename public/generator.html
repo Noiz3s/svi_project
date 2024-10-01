@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="outlines.css">
+    <title>Generator</title>
+</head>
+<body>
+    <header>
+        <h1>Добавление концерта</h1>
+        <a href="index.html">назад</a>
+    </header>
+<main>
+    <form id="tableForm" action="concert/create" method="post">
+        <p><label for="name">Название концерт</label></p>
+        <p><input type="text" name="name" id="name" placeholder="Введите название концерта"></p>
+
+        <p><label for="date">Дата концерта</label></p>
+        <p><input type="date" name="date" id="date" placeholder="ДД.ММ.ГГГГ"></p>
+        <button type="submit">Добавить</button>
+    </form>
+    <div id="generatedTable"></div>
+</main>
+
+<script src="generator2.js"></script>
+</body>
+</html>
