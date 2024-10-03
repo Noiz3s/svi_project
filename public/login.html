@@ -1,101 +1,113 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="outlines.css">
-  <title>LoginPage</title>
-</head>
-<body>
-<header>
-  <a href="index.html">Назад</a>
-</header>
-<div style="clear: both">
-  <h1 onclick="showLoginForm()" style="display: inline-block">Вход</h1>
-  <h1 onclick="showRegistrationForm()" style="display: inline-block; margin-left: 50px" >Регистрация</h1>
-</div>
-<hr />
-<form id="loginForm" action="user/login" method="post">
-  <fieldset>
-    <p><label for="email_login">Электронная почта</label></p>
-    <p><input type="email" name="email" id="email_login" placeholder="example@mail.ru" required></p>
-
-    <p><label for="password_login">Пароль</label></p>
-    <p><input type="password" name="password" id="password_login" placeholder="Password_123" required></p>
-
-    <p></p>
-    <button type="submit">Отправить</button>
-    <button type="reset">Сбросить</button>
-  </fieldset>
-</form>
-
-<script>
-  const loginForm = document.getElementById('loginForm');
-
-  loginForm.addEventListener('submit', async function(event) {
-    event.preventDefault();
-
-    // Собираем данные формы
-    const email = document.getElementById('email_login').value;
-    const password = document.getElementById('password_login').value;
-
-    const loginData = { email, password };
-
-    try {
-      // Отправляем запрос на сервер
-      const response = await fetch('/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(loginData)
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Сохраняем данные пользователя в sessionStorage
-        sessionStorage.setItem('user', JSON.stringify(data.user));
-
-        // Перенаправляем на страницу кабинета
-        window.location.href = '/cabinet.html';
-      } else {
-        alert('Неверные учетные данные');
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="outlines.css">
+    <title>LoginPage</title>
+  </head>
+  <body>
+  <header>
+    <a href="index.html">Назад</a>
+  </header>
+  <div style="clear: both">
+    <h1 onclick="showLoginForm()" style="display: inline-block">Вход</h1>
+    <h1 onclick="showRegistrationForm()" style="display: inline-block; margin-left: 50px" >Регистрация</h1>
+  </div>
+  <hr />
+  <form id="loginForm" action="user/login" method="post">
+    <fieldset>
+      <p><label for="email_login">Электронная почта</label></p>
+      <p><input type="email" name="email" id="email_login" placeholder="example@mail.ru" required></p>
+  
+      <p><label for="password_login">Пароль</label></p>
+      <p><input type="password" name="password" id="password_login" placeholder="Password_123" required></p>
+  
+      <p></p>
+      <button type="submit">Отправить</button>
+      <button type="reset">Сбросить</button>
+    </fieldset>
+  </form>
+  
+  <script>
+    const loginForm = document.getElementById('loginForm');
+  
+    loginForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
+  
+      // Собираем данные формы
+      const email = document.getElementById('email_login').value;
+      const password = document.getElementById('password_login').value;
+  
+      const loginData = { email, password };
+  
+      // Проверка email
+      if (!validateEmail(email)) {
+        alert('Некорректный email');
+        return;
       }
-    } catch (error) {
-      console.error('Ошибка при входе:', error);
+  
+      try {
+        // Отправляем запрос на сервер
+        const response = await fetch('/user/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(loginData)
+        });
+  
+        const data = await response.json();
+  
+        if (data.success) {
+          // Сохраняем данные пользователя в sessionStorage
+          sessionStorage.setItem('user', JSON.stringify(data.user));
+  
+          // Перенаправляем на страницу кабинета
+          window.location.href = '/cabinet.html';
+        } else {
+          alert('Неверные учетные данные');
+        }
+      } catch (error) {
+        console.error('Ошибка при входе:', error);
+      }
+    });
+  
+    // Функция проверки email
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(String(email).toLowerCase());
     }
-  });
-</script>
-
-<form id="registrationForm" action="user/register" method="post">
-  <fieldset>
-    <p><label for="email_reg">Электронная почта</label></p>
-    <p><input type="email" name="email" id="email_reg" placeholder="example@mail.ru" required></p>
-
-    <p><label for="password_reg">Пароль</label></p>
-    <p><input type="password" name="password" id="password_reg" placeholder="Password_123" required></p>
-
-    <p><label for="repeat_password">Повторите пароль</label></p>
-    <p><input type="password" name="repeat_password" id="repeat_password" placeholder="Password_123" required></p>
-
-    <p></p>
-    <button type="submit">Отправить</button>
-    <button type="reset">Сбросить</button>
-  </fieldset>
-</form>
-
-<script>
-  document.getElementById('registrationForm').style.display = 'none';
-
-  function showLoginForm() {
-    document.getElementById('loginForm').style.display = 'block';
+  </script>
+  
+  <form id="registrationForm" action="user/register" method="post">
+    <fieldset>
+      <p><label for="email_reg">Электронная почта</label></p>
+      <p><input type="email" name="email" id="email_reg" placeholder="example@mail.ru" required></p>
+  
+      <p><label for="password_reg">Пароль</label></p>
+      <p><input type="password" name="password" id="password_reg" placeholder="Password_123" required></p>
+  
+      <p><label for="repeat_password">Повторите пароль</label></p>
+      <p><input type="password" name="repeat_password" id="repeat_password" placeholder="Password_123" required></p>
+  
+      <p></p>
+      <button type="submit">Отправить</button>
+      <button type="reset">Сбросить</button>
+    </fieldset>
+  </form>
+  
+  <script>
     document.getElementById('registrationForm').style.display = 'none';
-  }
-
-  function showRegistrationForm() {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registrationForm').style.display = 'block';
-  }
-</script>
-</body>
-</html>
+  
+    function showLoginForm() {
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('registrationForm').style.display = 'none';
+    }
+  
+    function showRegistrationForm() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registrationForm').style.display = 'block';
+    }
+  </script>
+  </body>
+  </html>
