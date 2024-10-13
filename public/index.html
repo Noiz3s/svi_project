@@ -22,7 +22,7 @@
                 <a href="#Albums">Альбомы</a>
                 <a href="#Photo">Фотографии</a>
                 <a href="#Contacts">Контакты</a>
-                <a href="login.html">Вход</a>
+                <a href="login.html" id="authLink">Вход</a>
             </div>
             <div class="Logo">
                 <img style="vertical-align: middle" src="3.svg" width="50" height="50" alt="Лого">
@@ -35,6 +35,20 @@
             <div class="Concert">
                 <h3>Loading...</h3>
             </div>
+            <div id="admin-section" style="display: none;">
+                <button id="add-concert">Добавить концерт</button>
+            </div>
+            <script>
+                const isAdmin = sessionStorage.getItem('isAdmin');
+
+                if (isAdmin === 'true') {
+                    document.getElementById('admin-section').style.display = 'block';
+                }
+
+                document.getElementById('add-concert').addEventListener('click', function() {
+                    window.location.href = 'generator.html'; // Перенаправление на страницу "Добавить концерт"
+                });
+            </script>
         </section>
         <script>
             window.onload = function() {
@@ -49,12 +63,12 @@
                               const date = new Date(concert.date)
                               if (date >= Date.now()) {
                                   concertDiv.innerHTML = `
-                                <br>
                                 <h3>${concert.name}. Дата: ${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()} в ${date.getHours()}:${date.getMinutes()}0</h3>
-                                <a href="/cabinet.html"> <button >Купить билеты</button> </a>
-                                <button class="show-tickets-btn" data-concert-id="${concert.id}">Показать билеты</button>
+                                <div class="tickets">
+                                    <p id="buying-tickets"> <button onclick="window.location.href='/cabinet.html';">Купить билеты</button> </p>
+                                    <button class="show-tickets-btn" data-concert-id="${concert.id}">Показать билеты</button>
+                                </div>
                                 <div class="ticket-list" style="display: none"></div>
-                                <br>
                             `;
                                   concertsDiv.appendChild(concertDiv);
 
@@ -70,7 +84,7 @@
                                                 if (tickets.length > 0) {
                                                     ticketList.innerHTML = tickets.map(ticket => {
                                                         if (ticket.status === 0) {
-                                                            return `<p style="color: black">Ряд: ${ticket.row} Место: ${ticket.place}</p>`;
+                                                            return `<p style="color: black; margin-left: 10px;">Ряд: ${ticket.row} Место: ${ticket.place}</p>`;
                                                         }
                                                     }).join('');
                                                 } else {
@@ -89,10 +103,10 @@
                                   });
                               }
                           });
-                          const generatorLink = document.createElement('a');
-                          generatorLink.href = 'generator.html';
-                          generatorLink.textContent = 'Добавить концерт';
-                          concertsDiv.appendChild(generatorLink);
+                          // const generatorLink = document.createElement('a');
+                          // generatorLink.href = 'generator.html';
+                          // generatorLink.textContent = 'Добавить концерт';
+                          // concertsDiv.appendChild(generatorLink);
                       } else {
                           concertsDiv.innerHTML = `
                             <h3>Пока нет(</h3>
@@ -177,8 +191,8 @@
                 <p>Сильную и неповторимую</p>
                 <p>Душу</p>
             </div>
-            <p>Как появилась группа?</p>
-            <p>Почему именно <strong>No Matter?</strong></p>
+<!--            <p>Как появилась группа?</p>-->
+<!--            <p>Почему именно <strong>No Matter?</strong></p>-->
 
             <p id="Albums"></p>
             <h1>Альбомы</h1>
@@ -208,8 +222,13 @@
         <section>
             <p id="Photo"></p>
             <h1>Фотографии</h1>
-            <p id="preloader">Загрузка...</p>
-            <div id="Photos" class="slideshow-container"></div>
+<!--            <p id="preloader">Загрузка...</p>-->
+            <div class="photos">
+                <img src="/png/photo1.png">
+                <img src="/png/photo2.png">
+                <img src="/png/photo3.png">
+                <img src="/png/photo4.png">
+            </div>
         </section>
     </main>
     <footer>
@@ -217,11 +236,11 @@
             <p id="Contacts"></p>
             <h4>Контактная информация</h4>
         </section>
-        <a href="tel:+79216344017"><img src="phone.png" width="20" height="20" alt="Телефон"></a>
-        <a href="https://vk.com/nomattermusic"><img src="VK%20Logo%20White.svg" width="20" height="20" alt="Мы в ВК"></a>
-        <a href="https://t.me/joinchat/g8B5ZuT_jU1iZGQy"><img src="tg.png" width="20" height="20" alt="Мы в Телеграмме"></a>
-        <a href="https://www.youtube.com/channel/UClcHwZbCwXWLRM3ZaXavtKg"><img src="youtube.png" width="20" height="20" alt="Мы в YouTube"></a>
-        <a href="https://www.instagram.com/no_omatter/"><img src="instagram.png" width="20" height="20" alt="Мы в Instagram"></a>
+        <a href="tel:+79216344017"><img src="phone.png" width="30" height="30" alt="Телефон"></a>
+        <a href="https://vk.com/nomattermusic"><img src="VK%20Logo%20White.svg" width="30" height="30" alt="Мы в ВК"></a>
+        <a href="https://t.me/joinchat/g8B5ZuT_jU1iZGQy"><img src="tg.png" width="30" height="30" alt="Мы в Телеграмме"></a>
+        <a href="https://www.youtube.com/channel/UClcHwZbCwXWLRM3ZaXavtKg"><img src="youtube.png" width="30" height="30" alt="Мы в YouTube"></a>
+        <a href="https://www.instagram.com/no_omatter/"><img src="instagram.png" width="30" height="30" alt="Мы в Instagram"></a>
 
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
@@ -259,7 +278,16 @@
             console.log('Disconnected from WebSocket server');
         });
     </script>
-
+    <script>
+        const authLink = document.getElementById('authLink');
+        if (sessionStorage.getItem('userEmail')) {
+            authLink.textContent = 'Личный аккаунт';
+            authLink.href = '/cabinet.html';
+        } else {
+            authLink.textContent = 'Вход';
+            authLink.href = 'login.html';
+        }
+    </script>
 </body>
 
 <div id="openModal" class="modal">

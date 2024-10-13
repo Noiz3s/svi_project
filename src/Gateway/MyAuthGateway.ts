@@ -41,7 +41,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   // Функция для проверки авторизации клиента
-  private isAuthenticated(client: any): boolean {
+  private   isAuthenticated(client: any): boolean {
     return true; // Замените это на вашу реальную логику авторизации
   }
 }

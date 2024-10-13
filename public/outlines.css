@@ -1,10 +1,10 @@
 html{
     scroll-behavior: smooth;
+    font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
 }
 h4, p, cite, pre{
     color: snow;
-    font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
-    font-size: 16px;
+    font-size: 21px;
 }
 
 #Concerts, #Albums, #Who, #Contacts{
@@ -15,9 +15,54 @@ h4, p, cite, pre{
     scroll-margin-top: 1em;
 }
 
+.cabinet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 h1{
     font-family: 'GillSans', 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
     color: deeppink;
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+#login-h1:hover {
+    color: snow;
+}
+
+#registration-h1:hover {
+    color: snow;
+}
+
+#loginForm {
+    padding: 20px;
+}
+
+.login p, label{
+    color: black;
+    font-family: GillSans, Arial, serif;
+    font-size: 1.5rem;
+    margin: 10px 0;
+}
+
+.login button {
+    width: 240px;
+    margin: 5px 0;
+}
+
+#registrationForm {
+    margin: 10px 0;
+    padding: 20px;
+}
+
+.register p {
+    margin: 10px 0;
+}
+
+hr {
+    margin: 30px 0;
 }
 
 span{
@@ -45,6 +90,7 @@ div.Nav {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-evenly;
+    z-index: 10;
 
     & a {
         overflow: hidden;
@@ -53,7 +99,7 @@ div.Nav {
         color: snow;
         display: inline;
         padding: 10px 28px;
-        font-size: 18px;
+        font-size: 20px;
         font-family: 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
     }
 
@@ -87,11 +133,34 @@ div.Nav {
 .Order {
     display:inline-block;
     border-radius: 10px;
-    padding: 1%;
-    margin: 1%;
+    padding: 10px 10px 10px 20px;
+    margin: 10px;
     background-color: rgba(255, 255, 255, 0.95);
     width: 98%;
     font-family: GillSans, Arial, serif;
+}
+
+.tickets {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#buying-tickets {
+    margin: 0;
+}
+
+.show-tickets-btn {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.3rem;
+    font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
+}
+
+.ticket-list {
+    border: 1px solid rgba(0, 0, 0, 0.75);
+    border-radius: 10px;
 }
 
 .preloader {
@@ -100,8 +169,8 @@ div.Nav {
 .Concert {
     display:inline-block;
     border-radius: 10px;
-    padding: 1%;
-    margin: 1%;
+    padding: 0 10px 10px 20px;
+    margin: 10px;
     vertical-align: middle;
     background-color: rgba(255, 255, 255, 0.95);
     width: 98%;
@@ -109,8 +178,8 @@ div.Nav {
 
     & h3{
         text-decoration: none;
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
+        margin-top: 20px;
+        margin-bottom: 10px;
         font-family: GillSans, Arial, serif;
         color: black;
         text-align: left;
@@ -124,6 +193,26 @@ div.Nav {
         text-align: left;
     }
 }
+
+#add-concert {
+    margin-left: 10px;
+}
+
+#go-back{
+    color: snow;
+    font-size: 1.3rem;
+}
+
+#go-back:visited{
+    color: snow;
+    font-size: 1.3rem;
+}
+
+#go-back:hover {
+    color: deeppink;
+}
+
+
 .notification{
     color: snow;
 }
@@ -131,25 +220,45 @@ form{
     background: snow;
     border-width: 0;
     border-radius: 10px;
+    padding: 10px;
+    font-size: 1.3rem;
 }
-fieldset p{
-    color: black;
-    font-family: GillSans, Arial, serif;
+
+select[multiple] {
+    height: 100px;
+    margin: 5px 0;
 }
-button {
-    background: lightpink;
-    color: black;
-    font-size: 14px;
-    border-width: 0;
-    padding: 10px 15px;
-    margin: 20px 0;
-    border-radius: 20px;
-    cursor: pointer;
-    outline: none;
+
+input, select, button {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 20px;
+    font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
 }
+
+#add-order {
+    margin-left: 10px;
+    margin-top: 20px;
+    width: 300px;
+}
+
 button:hover{
     background: deeppink;
     color: snow;
+}
+
+#logoutButton {
+    margin: 10px;
+    color: snow;
+    font-size: 1.3rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#logoutButton:hover {
+    color: deeppink;
 }
 
 table {
@@ -159,6 +268,11 @@ table {
     margin: 20px 0;
     border-radius: 20px;
     font-family: GillSans, Arial, serif;
+}
+
+#createOrderForm {
+    margin: 10px;
+    padding: 10px;
 }
 .modal {
     position: fixed; /* фиксированное положение */
@@ -275,6 +389,14 @@ table {
     overflow: auto;
 }
 
+#tickets {
+    width: 324px;
+    margin-left: 10px;
+}
+
+blockquote {
+    margin-left: 20px;
+}
 .Ura{
     display:inline-block;
     border-radius: 10px;
@@ -383,7 +505,7 @@ table {
     text-decoration: none;
     color: snow;
     font-family: GillSans, 'Comfortaa', 'Comic Sans MS', 'Arial', serif;
-    font-size: 16px;
+    font-size: 20px;
     padding: 8px 12px;
     position: absolute;
     bottom: 8px;
@@ -401,13 +523,36 @@ table {
     display: inline-block;
     transition: background-color 0.6s ease;
 }
+
 .active, .dot:hover {
     background-color: snow;
+}
+
+.photos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.photos img {
+    height: 700px;
+    width: 500px;
+    margin: 10px 5px;
 }
 
 body{
     background-color: rgba(0, 0, 0, 0.9);
 }
+
+#tableForm {
+    margin: 10px;
+}
+
+input #name & #date{
+    width: 200px;
+}
+
+
 
 footer{
     text-align: center;
