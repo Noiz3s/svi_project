@@ -6,29 +6,47 @@
   <title>User</title>
 </head>
 <body>
-<header>
-  <a href="index.html">Назад</a>
+<header class="cabinet-header">
+  <a id="go-back" href="index.html">Назад</a>
+  <a id="logoutButton" style="display: none;">Выход из аккаунта</a>
 </header>
 <section>
   <p id="Orders"></p>
-  <h1>Заказы</h1>
+  <h1 id="orderTitle">Заказы</h1>
   <div class="Order">
     <h3>Loading...</h3>
   </div>
-  <h1>Создать заказ</h1>
+  <h1 id="createOrderTitle">Создать заказ</h1>
   <form id="createOrderForm">
     <label for="concert">Концерт:</label>
     <select id="concert" name="concert" required></select>
     <br>
     <label for="tickets">Билеты:</label>
-    <select id="tickets" name="tickets" multiple required></select>
+    <select id="tickets" name="tickets" required></select>
     <br>
     <label for="email">Электронная почта</label>
     <input type="email" name="email" id="email" placeholder="example@mail.ru" required>
     <br>
-    <button type="submit">Создать заказ</button>
+    <div>
+      <button id="add-order" type="submit">Создать заказ</button>
+    </div>
   </form>
 </section>
+<script>
+  const userEmail = sessionStorage.getItem('userEmail');
+  const isAdmin = sessionStorage.getItem('isAdmin');
+
+  // показать кнопку выхода, если пользователь авторизован
+  if (userEmail) {
+    document.getElementById('logoutButton').style.display = 'block';
+  }
+
+  document.getElementById('logoutButton').addEventListener('click', function() {
+    sessionStorage.removeItem('userEmail');
+    sessionStorage.setItem('isAdmin', 'false');
+    window.location.href = 'index.html';
+  });
+</script>
 <script>
   window.onload = function() {
     // Fetch orders
@@ -42,9 +60,7 @@
             const concertDiv = document.createElement('div');
             const date = new Date(order.date);
             concertDiv.innerHTML = `
-              <br>
               <h3>Дата: ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} | Цена: ${order.price}руб. | Статус: ${order.status}</h3>
-              <br>
             `;
             concertsDiv.appendChild(concertDiv);
           });
@@ -74,6 +90,10 @@
             option.textContent = `${concert.name} (${new Date(concert.date).toLocaleDateString()})`;
             concertSelect.appendChild(option);
           });
+
+          if (data.length > 0) {
+            loadTicketsForConcert(data[0].id);
+          }
 
           // Load tickets when a concert is selected
           concertSelect.addEventListener('change', function() {
@@ -107,6 +127,30 @@
       .catch(error => {
         console.error('Error fetching concerts for order form:', error);
       });
+
+    function loadTicketsForConcert(concertId) {
+      const ticketsSelect = document.getElementById('tickets');
+      ticketsSelect.innerHTML = ''; // Очищаем текущий список билетов
+
+      if (concertId) {
+        fetch(`/concert/${concertId}/tickets`)
+                .then(response => response.json())
+                .then(tickets => {
+                  tickets.forEach(ticket => {
+                    if (ticket.status === 0) {
+                      const option = document.createElement('option');
+                      option.value = ticket.id;
+                      option.textContent = `Ряд: ${ticket.row} Место: ${ticket.place} Цена: ${ticket.price}`;
+                      ticketsSelect.appendChild(option);
+                    }
+                  });
+                })
+                .catch(error => {
+                  console.error('Error fetching tickets:', error);
+                  ticketsSelect.innerHTML = `<option>Ошибка при загрузке билетов</option>`;
+                });
+      }
+    }
 
     // Handle create order form submission
     const createOrderForm = document.getElementById('createOrderForm');
@@ -209,6 +253,10 @@
         });
     });
   </script>
+</div>
+
+<div id="successMessage" style="display: none; color: green; font-size: 18px;">
+  Заказ успешно создан!
 </div>
 
 </body>

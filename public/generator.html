@@ -7,12 +7,12 @@
 </head>
 <body>
     <header>
-        <h1>Добавление концерта</h1>
-        <a href="index.html">назад</a>
+        <a id="go-back" href="index.html">Назад</a>
+        <h1 id="add-concert">Добавление концерта</h1>
     </header>
 <main>
     <form id="tableForm" action="concert/create" method="post">
-        <p><label for="name">Название концерт</label></p>
+        <p><label for="name">Название концерта</label></p>
         <p><input type="text" name="name" id="name" placeholder="Введите название концерта"></p>
 
         <p><label for="date">Дата концерта</label></p>

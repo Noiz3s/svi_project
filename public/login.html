@@ -7,15 +7,15 @@
   </head>
   <body>
   <header>
-    <a href="index.html">Назад</a>
+    <a id="go-back" href="index.html">Назад</a>
   </header>
   <div style="clear: both">
-    <h1 onclick="showLoginForm()" style="display: inline-block">Вход</h1>
-    <h1 onclick="showRegistrationForm()" style="display: inline-block; margin-left: 50px" >Регистрация</h1>
+    <h1 id="login-h1" onclick="showLoginForm()" style="display: inline-block">Вход</h1>
+    <h1 id="registration-h1" onclick="showRegistrationForm()" style="display: inline-block; margin-left: 50px" >Регистрация</h1>
   </div>
   <hr />
   <form id="loginForm" action="user/login" method="post">
-    <fieldset>
+    <div class="login">
       <p><label for="email_login">Электронная почта</label></p>
       <p><input type="email" name="email" id="email_login" placeholder="example@mail.ru" required></p>
   
@@ -25,7 +25,7 @@
       <p></p>
       <button type="submit">Отправить</button>
       <button type="reset">Сбросить</button>
-    </fieldset>
+    </div>
   </form>
   
   <script>
@@ -61,7 +61,10 @@
         if (data.success) {
           // Сохраняем данные пользователя в sessionStorage
           sessionStorage.setItem('user', JSON.stringify(data.user));
-  
+          sessionStorage.setItem('userEmail', email);
+
+          loginUser(email);
+
           // Перенаправляем на страницу кабинета
           window.location.href = '/cabinet.html';
         } else {
@@ -80,20 +83,20 @@
   </script>
   
   <form id="registrationForm" action="user/register" method="post">
-    <fieldset>
+    <div class="register">
       <p><label for="email_reg">Электронная почта</label></p>
       <p><input type="email" name="email" id="email_reg" placeholder="example@mail.ru" required></p>
   
       <p><label for="password_reg">Пароль</label></p>
       <p><input type="password" name="password" id="password_reg" placeholder="Password_123" required></p>
   
-      <p><label for="repeat_password">Повторите пароль</label></p>
+      <p><label id="repeat-password-text" for="repeat_password">Повторите пароль</label></p>
       <p><input type="password" name="repeat_password" id="repeat_password" placeholder="Password_123" required></p>
   
       <p></p>
       <button type="submit">Отправить</button>
       <button type="reset">Сбросить</button>
-    </fieldset>
+    </div>
   </form>
   
   <script>
@@ -107,6 +110,16 @@
     function showRegistrationForm() {
       document.getElementById('loginForm').style.display = 'none';
       document.getElementById('registrationForm').style.display = 'block';
+    }
+  </script>
+
+  <script>
+    function loginUser(email) {
+      if (email === 'admin@gmail.com') {
+        sessionStorage.setItem('isAdmin', 'true');
+      } else {
+        sessionStorage.setItem('isAdmin', 'false');
+      }
     }
   </script>
   </body>
