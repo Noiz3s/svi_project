@@ -21,11 +21,11 @@ import { PassportModule } from '@nestjs/passport';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'dpg-crsj7sl6l47c73d0ohr0-a.oregon-postgres.render.com',
+      host: 'dpg-csg0litumphs73afl3h0-a.oregon-postgres.render.com',
       port: 5432,
-      username: 'svi_project_bd_user',
-      password: '1x50pXiFSEkVguWW1qECuwlurSN2M0bE',
-      database: 'svi_project_bd',
+      username: 'svi_project_bd_hyaf_user',
+      password: 'YsKVUWUqdMXm36SZd8bEfEFONqkKigy0',
+      database: 'svi_project_bd_hyaf',
       synchronize: true,
       entities: [Concert, Ticket, Order, User],
       ssl: true,
