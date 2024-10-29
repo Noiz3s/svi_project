@@ -29,6 +29,9 @@
   </form>
   
   <script>
+    if(sessionStorage.getItem('user') != null){
+      window.location.href = "/cabinet.html"
+    }
     const loginForm = document.getElementById('loginForm');
   
     loginForm.addEventListener('submit', async function(event) {
@@ -62,6 +65,7 @@
           // Сохраняем данные пользователя в sessionStorage
           sessionStorage.setItem('user', JSON.stringify(data.user));
           sessionStorage.setItem('userEmail', email);
+
 
           loginUser(email);
 

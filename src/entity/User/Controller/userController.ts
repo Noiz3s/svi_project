@@ -97,9 +97,9 @@ export class UserController {
       success: true,
       user: {
         isadmin: user.isadmin,
+        id: user.id
       }
     });
-    //res.redirect('/cabinet.html');
     return user;
   }
 

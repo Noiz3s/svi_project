@@ -24,6 +24,7 @@ export class OrderService {
   async CreateOrder(createOrderDTO: OrderDTO): Promise<Order> {
     const savedOrder = new Order();
     savedOrder.date = new Date(createOrderDTO.date);
+    savedOrder.buyer = createOrderDTO.buyer;
     savedOrder.status = createOrderDTO.status;
     savedOrder.price = createOrderDTO.price;
     savedOrder.tickets = new Promise<Ticket[]>(async () => {

@@ -21,6 +21,10 @@ export class Order {
   user: Promise<User>;
 
   @ApiProperty()
+  @Column()
+  buyer: number;
+
+  @ApiProperty()
   @OneToMany(() => Ticket, (ticket) => ticket.orderid)
   tickets: Promise<Ticket[]>;
 

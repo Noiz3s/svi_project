@@ -43,11 +43,14 @@
 
   document.getElementById('logoutButton').addEventListener('click', function() {
     sessionStorage.removeItem('userEmail');
+    sessionStorage.removeItem('user')
     sessionStorage.setItem('isAdmin', 'false');
     window.location.href = 'index.html';
   });
 </script>
 <script>
+  let concertId;
+
   window.onload = function() {
     // Fetch orders
     fetch('/order/All_orders')
@@ -60,9 +63,11 @@
             const concertDiv = document.createElement('div');
             const date = new Date(order.date);
             concertDiv.innerHTML = `
-              <h3>Дата: ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} | Цена: ${order.price}руб. | Статус: ${order.status}</h3>
+              <h3>Дата: ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} | Цена: ${order.price}руб.</h3>
             `;
-            concertsDiv.appendChild(concertDiv);
+            if(order.buyer === JSON.parse(sessionStorage.getItem('user')).id) {
+              concertsDiv.appendChild(concertDiv);
+            }
           });
         } else {
           concertsDiv.innerHTML = `
@@ -97,7 +102,7 @@
 
           // Load tickets when a concert is selected
           concertSelect.addEventListener('change', function() {
-            const concertId = concertSelect.value;
+            concertId = concertSelect.value;
             const ticketsSelect = document.getElementById('tickets');
             ticketsSelect.innerHTML = ''; // Clear existing options
 
@@ -110,7 +115,9 @@
                       const option = document.createElement('option');
                       option.value = ticket.id;
                       option.textContent = `Ряд: ${ticket.row} Место: ${ticket.place} Цена: ${ticket.price}`;
-                      ticketsSelect.appendChild(option);
+                      if(ticket.status === 0) {
+                        ticketsSelect.appendChild(option);
+                      }
                     }
                   });
                 })
@@ -154,19 +161,24 @@
 
     // Handle create order form submission
     const createOrderForm = document.getElementById('createOrderForm');
-    createOrderForm.addEventListener('submit', function(event) {
+    createOrderForm.addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      const concertId = document.getElementById('concert');
       const ticketsSelect = document.getElementById('tickets');
       const selectedTickets = Array.from(ticketsSelect.selectedOptions).map(option => option.value);
       let ticketsSum = 0;
-      selectedTickets.forEach(ticket => ticketsSum += ticket.valueOf());
+      let resp = await fetch(`/ticket/${selectedTickets[0].valueOf()}`).then(response => response.json()).then(data => {
+        return data.price
+      });
+      ticketsSum += resp;
+      console.log(ticketsSum);
+
       const orderData = {
         tickets: selectedTickets,
         date: Date.now(),
         price: ticketsSum,
         status: 1,
+        buyer: JSON.parse(sessionStorage.getItem('user')).id
       };
       fetch(`/order/create/${document.getElementById('email').value}`, {
         method: 'POST',
@@ -176,16 +188,26 @@
         body: JSON.stringify(orderData),
       })
         .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert('Заказ успешно создан!');
-            location.reload();
-          }
-        });
+        .then(async data => {
+          alert('Заказ успешно создан!');
+          let ticketData = await fetch(`/ticket/${selectedTickets[0].valueOf()}`)
+            .then(response => response.json())
+            .then(data => {
+              return data;
+            });
+          ticketData.status = 1;
+          await fetch(`/ticket/${selectedTickets[0].valueOf()}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ticketData),
+          }).then(data => {location.reload();})
+        })
     });
   };
 </script>
-<div id="adminSection" , style="display: none">
+<div id="adminSection" style="display: none">
   <h1>Добавить билет</h1>
   <form id="addTicketForm">
     <label for="ticketRow">Ряд:</label>

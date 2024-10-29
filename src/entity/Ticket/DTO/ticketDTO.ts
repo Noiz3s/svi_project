@@ -9,9 +9,6 @@ export class TicketDTO {
   @IsInt()
   row: number;
 
-  @IsInt()
-  concertid: number;
-
   @IsNotEmpty()
   @IsInt()
   place: number;

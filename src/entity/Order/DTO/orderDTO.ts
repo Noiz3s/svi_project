@@ -13,6 +13,9 @@ export class OrderDTO {
   @IsEnum(OrderStatus)
   status: OrderStatus;
 
+  @IsNotEmpty()
+  buyer: number;
+
   @IsArray()
   tickets: TicketDTO[];
 }
