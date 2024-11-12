@@ -216,7 +216,7 @@
     <input class="tickedMode" type="radio" name="ticketMode" value="multiple"> Множество билетов
   </label>
   <label class="ticket-mode-label">
-    <input type="radio" name="ticketMode" value="dancefloor"> Танцпол
+    <input class="tickedMode" type="radio" name="ticketMode" value="dancefloor"> Танцпол
   </label>
 
   <form id="addTicketForm">
@@ -293,7 +293,7 @@
           document.getElementById('multipleTicketFields').style.display = 'block';
           document.getElementById('dancefloorTicketFields').style.display = 'none';
         }
-        if (this.value === 'dancefloor') {
+        else if (this.value === 'dancefloor') {
           document.getElementById('singleTicketFields').style.display = 'none';
           document.getElementById('multipleTicketFields').style.display = 'none';
           document.getElementById('dancefloorTicketFields').style.display = 'block';
