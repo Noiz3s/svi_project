@@ -43,7 +43,7 @@
 
   document.getElementById('logoutButton').addEventListener('click', function() {
     sessionStorage.removeItem('userEmail');
-    sessionStorage.removeItem('user')
+    sessionStorage.removeItem('user');
     sessionStorage.setItem('isAdmin', 'false');
     window.location.href = 'index.html';
   });
@@ -65,7 +65,7 @@
             concertDiv.innerHTML = `
               <h3>Дата: ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} | Цена: ${order.price}руб.</h3>
             `;
-            if(order.buyer === JSON.parse(sessionStorage.getItem('user')).id) {
+            if (order.buyer === JSON.parse(sessionStorage.getItem('user')).id) {
               concertsDiv.appendChild(concertDiv);
             }
           });
@@ -99,40 +99,12 @@
           if (data.length > 0) {
             loadTicketsForConcert(data[0].id);
           }
-
           // Load tickets when a concert is selected
           concertSelect.addEventListener('change', function() {
             concertId = concertSelect.value;
-            const ticketsSelect = document.getElementById('tickets');
-            ticketsSelect.innerHTML = ''; // Clear existing options
-
-            if (concertId) {
-              fetch(`/concert/${concertId}/tickets`)
-                .then(response => response.json())
-                .then(tickets => {
-                  tickets.forEach(ticket => {
-                    if (ticket.status === 0) {
-                      const option = document.createElement('option');
-                      option.value = ticket.id;
-                      option.textContent = `Ряд: ${ticket.row} Место: ${ticket.place} Цена: ${ticket.price}`;
-                      if(ticket.status === 0) {
-                        ticketsSelect.appendChild(option);
-                      }
-                    }
-                  });
-                })
-                .catch(error => {
-                  console.error('Error fetching tickets:', error);
-                  ticketsSelect.innerHTML = `<option>Ошибка при загрузке билетов</option>`;
-                });
-            }
+            loadTicketsForConcert(concertId);
           });
-        } else {
-          console.error('Element with id "concert" not found');
         }
-      })
-      .catch(error => {
-        console.error('Error fetching concerts for order form:', error);
       });
 
     function loadTicketsForConcert(concertId) {
@@ -141,21 +113,33 @@
 
       if (concertId) {
         fetch(`/concert/${concertId}/tickets`)
-                .then(response => response.json())
-                .then(tickets => {
-                  tickets.forEach(ticket => {
-                    if (ticket.status === 0) {
-                      const option = document.createElement('option');
-                      option.value = ticket.id;
-                      option.textContent = `Ряд: ${ticket.row} Место: ${ticket.place} Цена: ${ticket.price}`;
-                      ticketsSelect.appendChild(option);
-                    }
-                  });
-                })
-                .catch(error => {
-                  console.error('Error fetching tickets:', error);
-                  ticketsSelect.innerHTML = `<option>Ошибка при загрузке билетов</option>`;
-                });
+          .then(response => response.json())
+          .then(tickets => {
+            tickets
+              .filter(ticket => ticket.status === 0) // Только доступные билеты
+              .sort((a, b) => {
+                if (a.row === b.row) {
+                  return a.place - b.place;
+                }
+                return a.row - b.row;
+              })
+              .forEach(ticket => {
+                if (ticket.status === 0) {
+                  const option = document.createElement('option');
+                  option.value = ticket.id;
+                  if (ticket.place === -1) {
+                    option.textContent = `Танцпол; Мест: ${ticket.row} Цена: ${ticket.price}`;
+                  } else {
+                    option.textContent = `Ряд: ${ticket.row}; Место: ${ticket.place}; Цена: ${ticket.price}`;
+                  }
+                  ticketsSelect.appendChild(option);
+                }
+              });
+          })
+          .catch(error => {
+            console.error('Error fetching tickets:', error);
+            ticketsSelect.innerHTML = `<option>Ошибка при загрузке билетов</option>`;
+          });
       }
     }
 
@@ -168,7 +152,10 @@
       const selectedTickets = Array.from(ticketsSelect.selectedOptions).map(option => option.value);
       let ticketsSum = 0;
       let resp = await fetch(`/ticket/${selectedTickets[0].valueOf()}`).then(response => response.json()).then(data => {
-        return data.price
+        return data.price;
+      });
+      let type = await fetch(`/ticket/${selectedTickets[0].valueOf()}`).then(response => response.json()).then(data => {
+        return data.place;
       });
       ticketsSum += resp;
       console.log(ticketsSum);
@@ -178,7 +165,7 @@
         date: Date.now(),
         price: ticketsSum,
         status: 1,
-        buyer: JSON.parse(sessionStorage.getItem('user')).id
+        buyer: JSON.parse(sessionStorage.getItem('user')).id,
       };
       fetch(`/order/create/${document.getElementById('email').value}`, {
         method: 'POST',
@@ -195,30 +182,77 @@
             .then(data => {
               return data;
             });
-          ticketData.status = 1;
+          if (type === -1) {
+            ticketData.row -= 1;
+            if (ticketData.row === 0) {
+              ticketData.status = 1;
+            } else {
+              ticketData.status = 0;
+            }
+          } else {
+            ticketData.status = 1;
+          }
           await fetch(`/ticket/${selectedTickets[0].valueOf()}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(ticketData),
-          }).then(data => {location.reload();})
-        })
+          }).then(data => {
+            location.reload();
+          });
+        });
     });
   };
 </script>
 <div id="adminSection" style="display: none">
   <h1>Добавить билет</h1>
+
+  <!-- Выбор режима добавления -->
+  <label>
+    <input class="ticketMode" type="radio" name="ticketMode" value="single" checked> Один билет
+  </label>
+  <label>
+    <input class="tickedMode" type="radio" name="ticketMode" value="multiple"> Множество билетов
+  </label>
+  <label class="ticket-mode-label">
+    <input type="radio" name="ticketMode" value="dancefloor"> Танцпол
+  </label>
+
   <form id="addTicketForm">
-    <label for="ticketRow">Ряд:</label>
-    <input type="number" name="ticketRow" id="ticketRow" required>
+    <label for="concertList">Концерт:</label>
+    <select id="concertList" name="concertList" required></select>
     <br>
-    <label for="concertId">ID Концерта:</label>
-    <input type="number" name="concertId" id="concertId" required>
-    <br>
-    <label for="ticketPlace">Место:</label>
-    <input type="number" name="ticketPlace" id="ticketPlace" required>
-    <br>
+
+    <!-- Поля для добавления одного билета -->
+    <div id="singleTicketFields">
+      <label for="ticketRow">Ряд:</label>
+      <input type="number" name="ticketRow" id="ticketRow">
+      <br>
+      <label for="ticketPlace">Место:</label>
+      <input type="number" name="ticketPlace" id="ticketPlace">
+      <br>
+    </div>
+
+    <!-- Поля для добавления множества билетов -->
+    <div id="multipleTicketFields" style="display: none;">
+      <label for="startTicketRow">Начальный ряд:</label>
+      <input type="number" name="startTicketRow" id="startTicketRow">
+      <br>
+      <label for="rowCount">Количество рядов:</label>
+      <input type="number" name="rowCount" id="rowCount" min="1">
+      <br>
+      <label for="seatsPerRow">Количество мест в ряду:</label>
+      <input type="number" name="seatsPerRow" id="seatsPerRow" min="1">
+      <br>
+    </div>
+
+    <div id="dancefloorTicketFields" style="display: none;">
+      <label for="dancefloorSeats">Количество мест на танцполе:</label>
+      <input type="number" name="dancefloorSeats" id="dancefloorSeats" min="1">
+      <br>
+    </div>
+
     <label for="ticketPrice">Цена:</label>
     <input type="number" name="ticketPrice" id="ticketPrice" required>
     <br>
@@ -228,7 +262,7 @@
       <option value="1">Забронирован</option>
     </select>
     <br>
-    <button type="submit">Добавить билет</button>
+    <button type="submit">Добавить билет(ы)</button>
   </form>
 
   <script>
@@ -237,9 +271,48 @@
       adminSection.style.display = 'block';
     }
 
+    const concertList = document.getElementById('concertList');
+    fetch('/concert/All_concerts')
+      .then(response => response.json())
+      .then(concerts => {
+        concerts.forEach(concert => {
+          const option = document.createElement('option');
+          option.value = concert.id;
+          option.textContent = `${concert.name} (${new Date(concert.date).toLocaleDateString()})`;
+          concertList.appendChild(option);
+        });
+      })
+      .catch(error => console.error('Ошибка при загрузке концертов:', error));
+
+    // Обработчик выбора режима добавления
+    const ticketModeRadioButtons = document.querySelectorAll('input[name="ticketMode"]');
+    ticketModeRadioButtons.forEach(radio => {
+      radio.addEventListener('change', function() {
+        if (this.value === 'multiple') {
+          document.getElementById('singleTicketFields').style.display = 'none';
+          document.getElementById('multipleTicketFields').style.display = 'block';
+          document.getElementById('dancefloorTicketFields').style.display = 'none';
+        }
+        if (this.value === 'dancefloor') {
+          document.getElementById('singleTicketFields').style.display = 'none';
+          document.getElementById('multipleTicketFields').style.display = 'none';
+          document.getElementById('dancefloorTicketFields').style.display = 'block';
+        } else {
+          document.getElementById('singleTicketFields').style.display = 'block';
+          document.getElementById('multipleTicketFields').style.display = 'none';
+          document.getElementById('dancefloorTicketFields').style.display = 'none';
+        }
+      });
+    });
+
     const addTicketForm = document.getElementById('addTicketForm');
     addTicketForm.addEventListener('submit', function(event) {
       event.preventDefault();
+
+      const concertId = parseInt(concertList.value, 10);
+      const price = parseFloat(document.getElementById('ticketPrice').value);
+      const status = parseInt(document.getElementById('ticketStatus').value, 10);
+      let tickets = [];
 
       let id = 0;
       fetch('/ticket/All_tickets')
@@ -250,33 +323,46 @@
               id = ticket.id;
             }
           });
-
-          const ticketData = {
-            id: id + 1,
-            row: parseInt(document.getElementById('ticketRow').value, 10), // Преобразуем в число
-            concertid: parseInt(document.getElementById('concertId').value, 10), // Исправлено на concertId
-            place: parseInt(document.getElementById('ticketPlace').value, 10), // Преобразуем в число
-            price: parseFloat(document.getElementById('ticketPrice').value), // Преобразуем в число с плавающей точкой
-            status: parseInt(document.getElementById('ticketStatus').value, 10), // Преобразуем в число
-          };
-
-          console.log(ticketData); // Для отладки
-
-          fetch('/ticket/create', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(ticketData),
-          });
-        })
-        .catch(error => {
-          console.error('Ошибка при получении билетов:', error);
         });
+      // Получаем данные для добавления билетов
+      if (document.querySelector('input[name="ticketMode"]:checked').value === 'single') {
+        // Один билет
+        const row = parseInt(document.getElementById('ticketRow').value, 10);
+        const place = parseInt(document.getElementById('ticketPlace').value, 10);
+        tickets.push({ id: id += 1, row, place, concertid: concertId, price, status });
+      } else if (document.querySelector('input[name="ticketMode"]:checked').value === 'dancefloor') {
+        //танцпол
+        const row = parseInt(document.getElementById('dancefloorSeats').value,10);
+        const place = -1;
+        tickets.push({ id: id += 1, row, place, concertid: concertId, price, status });
+      } else {
+        // Множество билетов
+        const startRow = parseInt(document.getElementById('startTicketRow').value, 10);
+        const rowCount = parseInt(document.getElementById('rowCount').value, 10) || 1;
+        const seatsPerRow = parseInt(document.getElementById('seatsPerRow').value, 10) || 1;
+        for (let i = 0; i < rowCount; i++) {
+          for (let j = 1; j <= seatsPerRow; j++) {
+            tickets.push({ id: id += 1, row: startRow + i, place: j, concertid: concertId, price, status });
+          }
+        }
+      }
+      // Отправляем данные для каждого билета
+      tickets.forEach(ticketData => {
+        fetch('/ticket/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(ticketData),
+        }).catch(error => console.error('Ошибка при добавлении билета:', error));
+      });
+
+      alert('Билет(ы) успешно добавлены!');
+      addTicketForm.reset();
+      document.getElementById('singleTicketFields').style.display = 'block';
+      document.getElementById('multipleTicketFields').style.display = 'none';
+      document.getElementById('dancefloorTicketFields').style.display = 'none';
     });
   </script>
 </div>
-
 <div id="successMessage" style="display: none; color: green; font-size: 18px;">
   Заказ успешно создан!
 </div>

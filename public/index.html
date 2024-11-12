@@ -84,7 +84,13 @@
                                                 if (tickets.length > 0) {
                                                     ticketList.innerHTML = tickets.map(ticket => {
                                                         if (ticket.status === 0) {
-                                                            return `<p style="color: black; margin-left: 10px;">Ряд: ${ticket.row} Место: ${ticket.place}</p>`;
+                                                            if(ticket.place === -1){
+                                                                return `<p style="color: black; margin-left: 10px;">Танцпол; Мест: ${ticket.row}</p>`;
+
+                                                            }
+                                                            else {
+                                                                return `<p style="color: black; margin-left: 10px;">Ряд: ${ticket.row}; Место: ${ticket.place}</p>`;
+                                                            }
                                                         }
                                                     }).join('');
                                                 } else {

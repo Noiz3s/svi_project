@@ -15,6 +15,10 @@ h4, p, cite, pre{
     scroll-margin-top: 1em;
 }
 
+.ticketMode{
+    color: white;
+}
+
 .cabinet-header {
     display: flex;
     justify-content: space-between;
